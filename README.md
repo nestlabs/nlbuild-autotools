@@ -167,7 +167,7 @@ behalf of the user. For example:
 
 ```
 # Depending on whether my-package has been configured for an internal
-# location, it's directory stem within this package needs to be set
+# location, its directory stem within this package needs to be set
 # accordingly. In addition, if the location is internal, then we need
 # to attempt to pull it down using the bootstrap makefile.
 
