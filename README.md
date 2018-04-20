@@ -139,7 +139,9 @@ users. The bootstrap makefile supports both the generic 'repos' target
 to pull down all repositories on which your project depends as well as
 relative path targets to where those repositories might live in your
 project when they are internal (e.g,
-third_party/package/repo). Consequently, you can, for example, invoke:
+third_party/package/repo).
+
+Consequently, you can, for example, invoke:
 
 ```
 % make -f Makefile-bootstrap repos
