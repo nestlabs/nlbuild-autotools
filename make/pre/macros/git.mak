@@ -38,7 +38,7 @@ nlGitListConfigFromFileCommand        = $(call nlGitGetConfigFromFileCommand,$(1
 
 nlGitGetConfigFromFile                = $(shell $(call nlGitGetConfigFromFileCommand,$(1)))
 
-# NlGitListConfigFromFile <file>
+# nlGitListConfigFromFile <file>
 #
 # List all variables set in the specified config file <file>
 
