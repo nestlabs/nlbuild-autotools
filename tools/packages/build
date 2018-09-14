@@ -1,7 +1,8 @@
 #!/bin/sh
 
 #
-#    Copyright 2014-2017 Nest Labs Inc. All Rights Reserved.
+#    Copyright 2014-2018 Nest Labs Inc. All Rights Reserved.
+#    Copyright 2018 Google LLC. All Rights Reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -264,7 +265,9 @@ fetch_package() {
 # script.
 #
 removetmp() {
-    rm -f "${LIBTOOLIZE}"
+    if [ -O "${LIBTOOLIZE}" ]; then
+        rm -f "${LIBTOOLIZE}"
+    fi
     if [ -n "${AUTOM4TE_CFG}" ]; then
         rm -f "${AUTOM4TE_CFG}"
     fi
