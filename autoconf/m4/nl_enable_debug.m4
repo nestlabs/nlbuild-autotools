@@ -70,6 +70,22 @@ AC_DEFUN([NL_ENABLE_DEBUG],
                 ])
 
             if test "${nl_cv_build_debug}" = "yes"; then
+                if test "${ac_cv_prog_cc_g}" = "yes"; then
+                    CFLAGS="${CFLAGS} -g"
+                fi
+
+                if test "${ac_cv_prog_cxx_g}" = "yes"; then
+                    CXXFLAGS="${CXXFLAGS} -g"
+                fi
+
+                if test "${ac_cv_prog_objc_g}" = "yes"; then
+                    OBJCFLAGS="${OBJCFLAGS} -g"
+                fi
+
+                if test "${ac_cv_prog_objcxx_g}" = "yes"; then
+                    OBJCXXFLAGS="${OBJCXXFLAGS} -g"
+                fi
+
                 CFLAGS="${CFLAGS} -DDEBUG"
                 CXXFLAGS="${CXXFLAGS} -DDEBUG"
                 OBJCFLAGS="${OBJCFLAGS} -DDEBUG"
