@@ -1,3 +1,20 @@
+1.5.3 (2018-09-14)
+
+        * Address a number of issues with building the prepackaged GNU
+          autotools subset included in nlbuild-autotools for Ubuntu
+          Bionic.
+
+          - Fixed "Unescaped left brace in regex is deprecated" that
+            was formerly a warning in Perl 5.22 and is now a hard error
+            in Perl 5.26.
+
+          - Address new glibc glob interface changes by upgrading from
+            make-3.82 to make-4.1 and applying relevant Ubuntu Bionic
+            patches.
+
+        * Add support to the package 'build' script to find and apply
+          patches for the above.
+
 1.5.2 (2018-04-26)
 
         * Since the '--name-only' option only appears in git-2.6 and later
