@@ -220,7 +220,7 @@ pull, and the location in your project in which you want to place
 them.
 
 The format of 'repos.conf' _almost_ precisely follows that used by git
-submodules with one notable addtion, the 'commit' key. The 'commit'
+submodules with one notable addition, the 'commit' key. The 'commit'
 key allows you to specify not only what branch to checkout but, more
 precisely, what commit or tag to checkout rather than just _HEAD_ of a
 branch. More information is available in 'Makefile-bootstrap' or with
