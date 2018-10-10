@@ -1,3 +1,11 @@
+1.6.2 (2018-10-09)
+
+        * Take a different approach to version flapping against 'make
+          distcheck' by leaving VERSION_FILE as an immediate (:=) variable
+          and instead creating a two-level <PACKAGE>_VERSION variable, the
+          first of which is set from VERSION_FILE by default at make
+          recursion level zero (0).
+
 1.6.1 (2018-09-26)
 
         * Address an issue with VERSION_FILE on clean source code control
