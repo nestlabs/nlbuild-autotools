@@ -84,8 +84,8 @@ VERSION_FILE                      := $(if $(wildcard $(builddir)/.local-version)
 # version.
 #
 # The two-level variables and the check against MAKELEVEL ensures that
-# not only can the package version be overriden from the command line
-# but also when the version is NOT overriden that we bind the version
+# not only can the package version be overridden from the command line
+# but also when the version is NOT overridden that we bind the version
 # once and only once across potential sub-makes to prevent the version
 # from flapping as VERSION_FILE changes.
 #
