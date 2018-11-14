@@ -1,4 +1,5 @@
 #
+#    Copyright 2018 Google LLC. All Rights Reserved.
 #    Copyright 2017-2018 Nest Labs Inc. All Rights Reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,8 +18,8 @@
 #
 #    Description:
 #      This file is a make "header" or pre make header that defines make
-#      convenience macros for interacting with and managing git submodules
-#      in the context of managing project dependencies.
+#      convenience macros for interacting with and managing git
+#      repositories in the context of managing project dependencies.
 #
 
 # Third-party package repository configuration, if it exists, listing all
