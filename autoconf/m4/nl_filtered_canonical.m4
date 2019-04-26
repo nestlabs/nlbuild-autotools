@@ -1,4 +1,5 @@
 #
+#    Copyright 2019 Google LLC. All Rights Reserved.
 #    Copyright 2015-2016 Nest Labs Inc. All Rights Reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,7 +42,7 @@ AC_DEFUN([_NL_FILTERED_CANONICAL],
 [
     AC_CACHE_CHECK([filtered $1 system type],
         nl_cv_filtered_$1,
-        nl_cv_filtered_$1=`echo ${$1} | sed -e 's/[[[[:digit:].]]]*$//g'`
+        nl_cv_filtered_$1=`echo ${$1} | sed -e 's/[[[:digit:].]]*$//g'`
         nl_filtered_$1=${nl_cv_filtered_$1})
 ])
 
