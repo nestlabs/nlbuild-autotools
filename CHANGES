@@ -1,3 +1,18 @@
+1.6.8 (2019-04-29)
+
+        * Downgraded m4 from 1.4.17 to 1.4.5 since 1.4.5 seems to be the
+          last version of m4 that does not abort on invocation in the m4
+          *rintf and friends compatibility and portability library.
+
+        * Leverage both automake and pure make headers and footers by
+          including the latter in the former.
+
+        * Reworked how verbose progress is handled to simplify
+          specification of progress macros.
+
+        * Rebased several automake header macros implementations on their
+          pure make equivalents.
+
 1.6.7 (2019-04-26)
 
         * Addressed issues with NL_FILTERED_CANONICAL in which the desired
