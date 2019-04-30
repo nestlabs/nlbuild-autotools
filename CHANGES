@@ -1,3 +1,11 @@
+1.6.9 (2019-04-30)
+
+        * Now that both automake and pure make headers and footers are
+          co-mingled, address an issues in which the .DEFAULT_GOAL
+          specifications in the repos.mak footer were conflicting with
+          makefiles that wanted a different default goal by moving
+          those .DEFAULT_GOAL specifications to Makefile-bootstrap.
+
 1.6.8 (2019-04-29)
 
         * Downgraded m4 from 1.4.17 to 1.4.5 since 1.4.5 seems to be the

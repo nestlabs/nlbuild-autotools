@@ -202,13 +202,11 @@ $(NL_V_AT)echo "    this package regards as required or optional."
 $(NL_V_AT)echo
 endef # MaybePrintReposHelp
 
-.DEFAULT_GOAL                    := repos
 else
 
 define MaybePrintReposHelp
 endef # MaybePrintReposHelp
 
-.DEFAULT_GOAL                    := help
 endif # REPOS
 
 define PrintReposHelp
