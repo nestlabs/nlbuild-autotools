@@ -218,8 +218,8 @@ fetch_url() {
 
     # Try to fetch the package using wget or curl
 
-    fetch_url_with_command "${fetchdir}" "${url}" wget --quiet ||
-        fetch_url_with_command "${fetchdir}" "${url}" curl --silent --remote-name
+    fetch_url_with_command "${fetchdir}" "${url}" wget --tries 4 --no-check-certificate --quiet ||
+        fetch_url_with_command "${fetchdir}" "${url}" curl --retry 4 --insecure --silent --remote-name
 }
 
 #
