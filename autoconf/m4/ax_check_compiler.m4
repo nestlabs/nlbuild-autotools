@@ -31,8 +31,16 @@ AC_DEFUN([_AX_CHECK_COMPILER_OPTION_WITH_VAR],
     AC_MSG_CHECKING([whether the _AC_LANG compiler understands $3])
     SAVE_[]_AC_LANG_PREFIX[]FLAGS=${_AC_LANG_PREFIX[]FLAGS}
     SAVE_$2=${$2}
-    _AC_LANG_PREFIX[]FLAGS=$3
+    AS_LITERAL_IF([$3],
+      [m4_pushdef([COMPILER_OPTION], m4_bpatsubst([$3], [^-Wno-], [-W]))],
+      [compiler_option="$3"
+    case $compiler_option in
+      -Wno-*) compiler_option=`echo ".$compiler_option" | sed 's/^.//; s/^-Wno-/-W/'`;;
+    esac
+    m4_pushdef([COMPILER_OPTION], [$compiler_option])])dnl
+    _AC_LANG_PREFIX[]FLAGS=m4_defn([COMPILER_OPTION])
     AC_TRY_COMPILE(,[;],AC_MSG_RESULT([yes]); _AC_LANG_PREFIX[]FLAGS="${SAVE_[]_AC_LANG_PREFIX[]FLAGS}"; $2="${SAVE_$2} $3",AC_MSG_RESULT([no]); _AC_LANG_PREFIX[]FLAGS=${SAVE_[]_AC_LANG_PREFIX[]FLAGS}; $2=${SAVE_$2});
+    m4_popdef([COMPILER_OPTION])dnl
     unset SAVE_[]_AC_LANG_PREFIX[]FLAGS
     unset SAVE_$2
     AC_LANG_POP($1)
@@ -53,8 +61,16 @@ AC_DEFUN([_AX_CHECK_COMPILER_OPTION],
     AC_LANG_PUSH($1)
     AC_MSG_CHECKING([whether the _AC_LANG compiler understands $2])
     SAVE_[]_AC_LANG_PREFIX[]FLAGS=${_AC_LANG_PREFIX[]FLAGS}
-    _AC_LANG_PREFIX[]FLAGS=$2
+    AS_LITERAL_IF([$2],
+      [m4_pushdef([COMPILER_OPTION], m4_bpatsubst([$2], [^-Wno-], [-W]))],
+      [compiler_option="$2"
+    case $compiler_option in
+      -Wno-*) compiler_option=`echo ".$compiler_option" | sed 's/^.//; s/^-Wno-/-W/'`;;
+    esac
+    m4_pushdef([COMPILER_OPTION], [$compiler_option])])dnl
+    _AC_LANG_PREFIX[]FLAGS=m4_defn([COMPILER_OPTION])
     AC_TRY_COMPILE(,[;],AC_MSG_RESULT([yes]); _AC_LANG_PREFIX[]FLAGS="${SAVE_[]_AC_LANG_PREFIX[]FLAGS} $2",AC_MSG_RESULT([no]); _AC_LANG_PREFIX[]FLAGS=${SAVE_[]_AC_LANG_PREFIX[]FLAGS});
+    m4_popdef([COMPILER_OPTION])dnl
     unset SAVE_[]_AC_LANG_PREFIX[]FLAGS
     AC_LANG_POP($1)
 ])
