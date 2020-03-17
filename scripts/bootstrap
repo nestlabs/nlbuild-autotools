@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-#    Copyright 2019 Google LLC. All Rights Reserved.
+#    Copyright 2019-2020 Google LLC. All Rights Reserved.
 #    Copyright 2014-2017 Nest Labs Inc. All Rights Reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
@@ -200,7 +200,7 @@ fi
 # Establish some key directories
 
 srcdir=`dirname ${0}`
-abs_srcdir=`pwd`
+abs_srcdir=$(cd "{$srcdir}" && pwd)
 abs_top_srcdir="${abs_srcdir}"
 
 abs_top_hostdir="${nlbuild_autotools_dir}/tools/host"
