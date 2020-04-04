@@ -122,9 +122,9 @@ from source for this package on this build host by invoking:
 and then re-running this script which will use those executables.
 --------------------------------------------------------------------------------
 EOF
-    
+
       exit 1
-    
+
     fi
 }
 
@@ -203,12 +203,6 @@ elif [ ! -d "${nlbuild_autotools_dir}" ]; then
     exit 1
 
 fi
-
-# Establish some key directories
-
-srcdir="$(dirname "${0}")"
-abs_srcdir="$(cd "${srcdir}" && pwd)"
-abs_top_srcdir="${abs_srcdir}"
 
 abs_top_hostdir="${nlbuild_autotools_dir}/tools/host"
 
@@ -307,7 +301,7 @@ fi
 # guidance.
 
 check_required_executables
- 
+
 if [ -n "${verbose}" ]; then
     echo PATH="${PATH}"
 
@@ -373,7 +367,11 @@ if [ -n "${verbose}" ]; then
     echo "${local_action} && ${tool_action} && ${header_action} && ${make_action} && ${config_action}"
 fi
 
-${local_action} && ${tool_action} && ${header_action} && ${make_action} && ${config_action}
+if ! ERRORS=$( ${local_action} 2>&1 && ${tool_action} 2>&1 && ${header_action} 2>&1 && ${make_action} 2>&1 && ${config_action} 2>&1 ) || [[ -n $verbose ]]
+then
+  # Hang onto harmless error output unless failure or verbose
+  echo "$ERRORS"
+fi
 
 # Clean up any temporary files created.
 
