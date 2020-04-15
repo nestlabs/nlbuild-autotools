@@ -35,6 +35,8 @@
 
 force: # no rules, please always build ;)
 
+ifdef MAKEDIRS
+
 # The way we make a MAKEDIR
 define makedirs-make
 	$(MAKE) -C $1
@@ -43,7 +45,7 @@ endef # makedirs-make
 
 # simple dependency make snippet, scoped to makedirs
 define makedirs-depends
-$1: makedirs
+$1: | makedirs
 
 endef # makedirs-depends
 
@@ -55,6 +57,9 @@ $(foreach objects,$(filter %_OBJECTS,$(.VARIABLES)),\
 makedirs: force
 	$(foreach dir,$(MAKEDIRS),$(call makedirs-make,$(dir)))
 
+endif # ifdef MAKEDIRS
+
+ifdef MAKEDIR_TARGETS
 # The way me make a MAKEDIR_TARGET
 define makedirs-makedir-target-rule
 $1: force
@@ -63,3 +68,5 @@ endef # makedirs-makedir-target-rule
 
 $(foreach makedir_target,$(MAKEDIR_TARGETS),\
    $(eval $(call makedirs-makedir-target-rule,$(makedir_target))))
+
+endif # ifdef MAKEDIR_TARGETS
