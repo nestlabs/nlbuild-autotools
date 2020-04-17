@@ -31,11 +31,18 @@
 #        (all _OBJECTS) defined by a Makefile.am to depend upon an invocation
 #        of `$(MAKE) -C <DIR>` in that directory.
 #
+
+
+# same as ifdef MAKEDIRS || MAKEDIR_TARGETS
+ifneq ($(strip $(MAKEDIRS)$(MAKEDIR_TARGETS)),)
+
+makedirs_id:=makedirs_$(shell echo $$$$)
+
+endif # ifneq ($(strip $(MAKEDIRS)$(MAKEDIR_TARGETS)),)
+
 ifdef MAKEDIRS
 
-.PHONY: makedirs force
-
-force: # no rules, please always build ;)
+.PHONY: makedirs
 
 # The way we make a MAKEDIR
 define makedirs-make
@@ -54,16 +61,24 @@ $(foreach objects,$(filter %_OBJECTS,$(.VARIABLES)),\
    $(foreach object,$($(objects)),\
    $(eval $(call makedirs-depends,$(object)))))
 
-makedirs: force
+makedirs: $(makedirs_id)
 	$(foreach dir,$(MAKEDIRS),$(call makedirs-make,$(dir)))
+
+$(makedirs_id):
+	@touch $@
+	$(RM) $(filter-out $@,$(wildcard makedirs_*))
 
 endif # ifdef MAKEDIRS
 
 ifdef MAKEDIR_TARGETS
 # The way me make a MAKEDIR_TARGET
 define makedirs-makedir-target-rule
-$1: force
-	$(MAKE) -C $$(dir $$(@)) $$(notdir $$(@))
+$1: $(notdir $1).$(makedirs_id)
+	$(MAKE) -C $(dir $1) $(notdir $1)
+
+$(notdir $1).$(makedirs_id):
+	@touch $$@
+	@$(RM) $(filter-out $$@,$$(wildcard $(notdir $1).makedirs_*))
 endef # makedirs-makedir-target-rule
 
 $(foreach makedir_target,$(MAKEDIR_TARGETS),\
