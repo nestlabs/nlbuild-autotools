@@ -69,7 +69,7 @@ $(makedirs_id):
 	$(NL_V_AT)$(RM) $(filter-out $@,$(wildcard makedirs_*))
 
 .PHONY: makedirs_clean
-clean: makedirs_clean
+distclean clean: makedirs_clean
 
 makedirs_clean:
 	$(NL_V_AT)$(RM) $(wildcard makedirs_*)
@@ -87,7 +87,7 @@ $(notdir $1).$(makedirs_id):
 	$(NL_V_AT)$(RM) $(filter-out $$@,$$(wildcard $(notdir $1).makedirs_*))
 
 .PHONY: $(notdir $1).makedirs_clean
-clean: $(notdir $1).makedirs_clean
+distclean clean: $(notdir $1).makedirs_clean
 
 $(notdir $1).makedirs_clean:
 	$(NL_V_AT)$(RM) $$(wildcard $(notdir $1).makedirs_*)
