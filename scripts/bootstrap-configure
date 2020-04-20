@@ -33,9 +33,9 @@ srcdir=$(dirname "${0}")
 # Try to bring the package build back to a pristine state.
 
 if [[ -f config.status ]]; then
-  make maintainer-clean || exit $?
+  make maintainer-clean || exit ${?}
 fi
 
 # Change directories to the package source and rebootstrap the package.
 
-(cd "${srcdir}" && ./bootstrap) && "${srcdir}"/configure "$@"
+(cd "${srcdir}" && ./bootstrap) && "${srcdir}"/configure "${@}
