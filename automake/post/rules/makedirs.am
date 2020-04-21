@@ -36,19 +36,25 @@
 # same as ifdef MAKEDIRS || MAKEDIR_TARGETS
 ifneq ($(strip $(MAKEDIRS)$(MAKEDIR_TARGETS)),)
 
-makedirs_id:=makedirs_$(shell echo $$$$)
+# check to see if makedirs_id has been set for this invocation
+ifneq ($(origin makedirs_id),environment)
+
+  # the parent of this shell is the "root" make invocation
+  override makedirs_id:=makedirs_$(shell echo $$PPID)
+
+  # makes makedirs_id an environment var
+  export makedirs_id
+
+endif
 
 endif # ifneq ($(strip $(MAKEDIRS)$(MAKEDIR_TARGETS)),)
 
+#
+# MAKEDIRS section
+#
 ifdef MAKEDIRS
 
 .PHONY: makedirs
-
-# The way we make a MAKEDIR
-define makedirs-make
-	$(MAKE) -C $1
-
-endef # makedirs-make
 
 # simple dependency make snippet, scoped to makedirs
 define makedirs-depends
@@ -57,34 +63,61 @@ $1: | makedirs
 endef # makedirs-depends
 
 # Use brute force: before any compilation, all _OBJECTS depend on makedirs
+#  wish there were something in automake that meant "please do first"...
 $(foreach objects,$(filter %_OBJECTS,$(.VARIABLES)),\
    $(foreach object,$($(objects)),\
    $(eval $(call makedirs-depends,$(object)))))
 
-makedirs: $(makedirs_id)
-	$(foreach dir,$(MAKEDIRS),$(call makedirs-make,$(dir)))
+# This says chunk says:
+#  1. makedirs (the order-only PHONY target above) depends on the file
+#       makedirs_id in each of the MAKEDIR directories
+#  2. build $(makedir_id) by running make, then touching the id file
+#  3. clean and distclean should whack all makedir_id files that might
+#       have accumulated
+define makedirs-makedir-rules
+makedirs: $1/$(makedirs_id)
 
-$(makedirs_id):
-	$(NL_V_AT)touch $@
-	$(NL_V_AT)$(RM) $(filter-out $@,$(wildcard makedirs_*))
+$1/$(makedirs_id):
+	$(NL_V_AT)$(MAKE) -C $1
+	$(NL_V_AT)touch $$@
+	$(NL_V_AT)$(RM) $$(filter-out $$@,$$(wildcard $1/makedirs_*))
 
-.PHONY: makedirs_clean
-distclean clean: makedirs_clean
+$1/makedirs_clean:
+	$(NL_V_AT)$(RM) $$(wildcard $1/makedirs_*)
 
-makedirs_clean:
-	$(NL_V_AT)$(RM) $(wildcard makedirs_*)
+.PHONY: $1/makedirs_clean
+distclean clean: $1/makedirs_clean
+
+endef # define makedirs-makedir-rules
+
+# run the above chunk for each MAKEDIR
+$(foreach dir,$(MAKEDIRS),\
+	$(eval $(call makedirs-makedir-rules,$(dir))))
+
 
 endif # ifdef MAKEDIRS
 
+
+#
+# MAKEDIR_TARGETS section
+#
 ifdef MAKEDIR_TARGETS
-# The way me make a MAKEDIR_TARGET
-define makedirs-makedir-target-rule
+
+# This chunk says:
+#  1. the target ($1 in this function) depends on the target's
+#       makedir_id file in its directory
+#  2. build the target with make
+#  2. build the target's makedir_id by touching the id file (and
+#       whacking any leftovers, accumulated ones)
+#  3. clean and distclean should whack all makedir_id files that might
+#       have accumulated
+define makedirs-makedir-target-rules
 $1: $(notdir $1).$(makedirs_id)
-	$(MAKE) -C $(dir $1) $(notdir $1)
+	$(NL_V_AT)$(MAKE) -C $(dir $1) $(notdir $1)
 
 $(notdir $1).$(makedirs_id):
 	$(NL_V_AT)touch $$@
-	$(NL_V_AT)$(RM) $(filter-out $$@,$$(wildcard $(notdir $1).makedirs_*))
+	$(NL_V_AT)$(RM) $$(filter-out $$@,$$(wildcard $(notdir $1).makedirs_*))
 
 .PHONY: $(notdir $1).makedirs_clean
 distclean clean: $(notdir $1).makedirs_clean
@@ -92,9 +125,10 @@ distclean clean: $(notdir $1).makedirs_clean
 $(notdir $1).makedirs_clean:
 	$(NL_V_AT)$(RM) $$(wildcard $(notdir $1).makedirs_*)
 
-endef # makedirs-makedir-target-rule
+endef # makedirs-makedir-target-rules
 
+# invoke the chunk above for each of the MAKEDIR_TARGETS
 $(foreach makedir_target,$(MAKEDIR_TARGETS),\
-   $(eval $(call makedirs-makedir-target-rule,$(makedir_target))))
+   $(eval $(call makedirs-makedir-target-rules,$(makedir_target))))
 
 endif # ifdef MAKEDIR_TARGETS
