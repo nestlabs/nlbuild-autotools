@@ -56,11 +56,14 @@ ifdef MAKEDIRS
 
 .PHONY: makedirs
 
+ifeq ($(MAKECMDGOALS),$(filter-out clean distclean,$(MAKECMDGOALS)))
 # trick make into building makedirs first by forcing it to try to make an
 #  include file that depends on makedirs
 -include .makedirs_trick_never_exists.min
 
 .makedirs_trick_never_exists.min: makedirs
+
+endif # ifeq ($(MAKECMDGOALS),$(filter-out $(MAKECMDGOALS),clean distclean))
 
 
 # This says chunk says:
@@ -112,7 +115,7 @@ $1: $1.$(makedirs_id)
 
 $1.$(makedirs_id):
 	$(NL_V_AT)touch $$@
-	$(NL_V_AT)$(RM) $$(filter-out $$@,$$(wildcard $(notdir $1).makedirs_*))
+	$(NL_V_AT)$(RM) $$(filter-out $$@,$$(wildcard $1.makedirs_*))
 
 .PHONY: $1.makedirs_clean
 distclean clean: $1.makedirs_clean
