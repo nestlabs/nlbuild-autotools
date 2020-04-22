@@ -56,17 +56,12 @@ ifdef MAKEDIRS
 
 .PHONY: makedirs
 
-# simple dependency make snippet, scoped to makedirs
-define makedirs-depends
-$1: | makedirs
+# trick make into building makedirs first by forcing it to try to make an
+#  include file that depends on makedirs
+-include .makedirs_trick_never_exists.min
 
-endef # makedirs-depends
+.makedirs_trick_never_exists.min: makedirs
 
-# Use brute force: before any compilation, all _OBJECTS depend on makedirs
-#  wish there were something in automake that meant "please do first"...
-$(foreach objects,$(filter %_OBJECTS,$(.VARIABLES)),\
-   $(foreach object,$($(objects)),\
-   $(eval $(call makedirs-depends,$(object)))))
 
 # This says chunk says:
 #  1. makedirs (the order-only PHONY target above) depends on the file
@@ -112,18 +107,18 @@ ifdef MAKEDIR_TARGETS
 #  3. clean and distclean should whack all makedir_id files that might
 #       have accumulated
 define makedirs-makedir-target-rules
-$1: $(notdir $1).$(makedirs_id)
+$1: $1.$(makedirs_id)
 	$(NL_V_AT)$(MAKE) -C $(dir $1) $(notdir $1)
 
-$(notdir $1).$(makedirs_id):
+$1.$(makedirs_id):
 	$(NL_V_AT)touch $$@
 	$(NL_V_AT)$(RM) $$(filter-out $$@,$$(wildcard $(notdir $1).makedirs_*))
 
-.PHONY: $(notdir $1).makedirs_clean
-distclean clean: $(notdir $1).makedirs_clean
+.PHONY: $1.makedirs_clean
+distclean clean: $1.makedirs_clean
 
-$(notdir $1).makedirs_clean:
-	$(NL_V_AT)$(RM) $$(wildcard $(notdir $1).makedirs_*)
+$1.makedirs_clean:
+	$(NL_V_AT)$(RM) $$(wildcard $1.makedirs_*)
 
 endef # makedirs-makedir-target-rules
 
