@@ -38,4 +38,4 @@ fi
 
 # Change directories to the package source and rebootstrap the package.
 
-(cd "${srcdir}" && ./bootstrap) && "${srcdir}"/configure "${@}
+(cd "$srcdir" && ./bootstrap) && "$srcdir"/configure "${@}"
