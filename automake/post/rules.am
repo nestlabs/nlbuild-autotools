@@ -24,3 +24,4 @@ include $(abs_top_nlbuild_autotools_dir)/automake/post/rules/foreigndeps.am
 include $(abs_top_nlbuild_autotools_dir)/automake/post/rules/coverage.am
 include $(abs_top_nlbuild_autotools_dir)/automake/post/rules/pretty.am
 include $(abs_top_nlbuild_autotools_dir)/automake/post/rules/headers.am
+include $(abs_top_nlbuild_autotools_dir)/automake/post/rules/manifest.am
