@@ -24,7 +24,7 @@
 # The following targets provide some convenience targets for bootstrapping
 # the GNU autotools-based build system used by this package.
 
-all check coverage dist distcheck doc docdist install install-headers pretty pretty-check: Makefile
+all check coverage dist distcheck doc docdist install install-headers manifest pretty pretty-check: Makefile
 	$(NL_V_PROGRESS_MAKE)
 	$(MAKE) -f $(<) --no-print-directory $(@)
 
@@ -79,6 +79,9 @@ $(NL_V_AT)echo "  install-headers"
 $(NL_V_AT)echo "    Generate all configured public header artifacts for this "
 $(NL_V_AT)echo "    project and install them in DESTDIR on the build host "
 $(NL_V_AT)echo "    system."
+$(NL_V_AT)echo
+$(NL_V_AT)echo "  manifest"
+$(NL_V_AT)echo "    Generate an a project distribution manifest file (MANIFEST)."
 $(NL_V_AT)echo
 $(NL_V_AT)echo "  pretty"
 $(NL_V_AT)echo "    (Re-)format a collection of project source files."
