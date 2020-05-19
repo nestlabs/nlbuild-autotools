@@ -125,7 +125,7 @@ endef
 #
 ifdef NLFOREIGN_SUBDIR_DEPENDENCIES
 
-ifeq ($(MAKECMDGOALS),$(filter-out clean distclean maintainer-clean,$(MAKECMDGOALS)))
+ifeq ($(MAKECMDGOALS),$(filter-out distdir distdir-am manifestdir manifest-hook clean distclean maintainer-clean,$(MAKECMDGOALS)))
 
 # Always ensure that nlforeign-subdir-deps runs first against any
 # non-clean target goals such that make file maintainers do not have
@@ -140,7 +140,7 @@ ifeq ($(MAKECMDGOALS),$(filter-out clean distclean maintainer-clean,$(MAKECMDGOA
 
 .nlforeign_deps_trick_never_exists.min: nlforeign-subdir-deps
 
-endif # ifeq ($(MAKECMDGOALS),$(filter-out clean distclean maintainer-clean,$(MAKECMDGOALS)))
+endif # ifeq ($(MAKECMDGOALS),$(filter-out distdir distdir-am manifestdir manifest-hook clean distclean maintainer-clean,$(MAKECMDGOALS)))
 
 define nlforeign-subdir-make
 	$(NL_V_PROGRESS) "MAKE" "$(1)"
