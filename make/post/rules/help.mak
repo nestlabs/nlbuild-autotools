@@ -90,6 +90,7 @@ $(call PrintDocHelp)
 $(call PrintDocdistHelp)
 $(call PrintInstallHelp)
 $(call PrintInstallHeadersHelp)
+$(call PrintManifestHelp)
 $(call PrintPrettyHelp)
 $(call PrintReposHelp)
 endef # PrintHelp
