@@ -1,0 +1,172 @@
+#
+#    Copyright (c) 2020 nlbuild-autotools Authors. All Rights Reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+#
+
+#
+#    Description:
+#      This file...
+#
+
+nl-relativize = \
+  here=`pwd`; \
+  sed_first='s,^\([^/]*\)/.*$$,\1,'; \
+  sed_rest='s,^[^/]*/*,,'; \
+  sed_last='s,^.*/\([^/]*\)$$,\1,'; \
+  sed_butlast='s,/*[^/]*$$,,'; \
+  while test -n "$${dir1}"; do \
+    first=`echo "$${dir1}" | sed -e "$$sed_first"`; \
+    if test "$${first}" != "."; then \
+      if test "$${first}" = ".."; then \
+        dir2=`echo "$${here}" | sed -e "$$sed_last"`/"$${dir2}"; \
+        here=`echo "$${here}" | sed -e "$$sed_butlast"`; \
+      else \
+        first2=`echo "$${dir2}" | sed -e "$$sed_first"`; \
+        if test "$$first2" = "$${first}"; then \
+          dir2=`echo "$${dir2}" | sed -e "$$sed_rest"`; \
+        else \
+          dir2="../$${dir2}"; \
+        fi; \
+        here="$${here}"/"$${first}"; \
+      fi; \
+    fi; \
+    dir1=`echo "$${dir1}" | sed -e "$$sed_rest"`; \
+  done; \
+  reldir="$${dir2}"
+
+#
+# nl-remove-manifest
+#
+# Borne-compatible shell snippet to test for the presence of
+# MANIFESTFILE, removing it if it is an existing regular file.
+#
+# This may be overridden in sub-make processes with
+# 'nl-remove-manifest=:'.
+#
+nl-remove-manifest = \
+  if test -f "$(MANIFESTFILE)"; then \
+    $(_NL_PROGRESS) "REMOVE" "$(MANIFESTFILE)"; \
+    $(RM) "$(MANIFESTFILE)"; \
+  fi
+
+#
+# nl-postprocess-manifest
+#
+# Borne-compatiable shell snippet to postprocess MANIFESTFILE.
+#
+# This may be overridden in sub-make processes with
+# 'nl-postprocess-manifest=:'.
+#
+nl-postprocess-manifest = \
+  sort -u < "$(MANIFESTFILE)" | sed -e 's|^\./\+||;t' > "$(MANIFESTFILE).N" && mv "$(MANIFESTFILE).N" "$(MANIFESTFILE)"
+
+#
+# nl-check-manifest
+#
+# This macro displays a progress message to standard output that the
+# presence of the regular file MANIFESTFILE is being checked. If the
+# file exists, then it is removed. If it does not exist, then it is
+# created.
+#
+define nl-check-manifest
+	$(NL_V_PROGRESS) "CHECK" "$(MANIFESTFILE)"
+	$(NL_V_AT)$(nl-remove-manifest)
+	$(NL_V_AT)test -f "$(MANIFESTFILE)" || $(_NL_PROGRESS) "GEN" "$(MANIFESTFILE)"; touch "$(MANIFESTFILE)"
+endef # nl-check-manifest
+
+.PHONY: manifest manifest-recursive manifest-hook
+
+manifest:
+	$(NL_V_PROGRESS) "MAKE" "$(MANIFESTFILE)"
+	$(NL_V_AT)$(MAKE) $(MFLAGS) $(MANIFESTFILE)
+
+$(MANIFESTFILE): manifestdir
+
+manifestdir: $(DISTFILES)
+	$(nl-check-manifest)
+	$(NL_V_AT)topbuilddirregexp=`echo "$(top_builddir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
+	srcdirregexp=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
+	topsrcdirregexp=`echo "$(top_srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
+	list='$(DISTFILES)'; \
+	    manifest_paths=`for file in $${list}; do echo $${file}; done | \
+	    sed -e "s|^$${srcdirregexp}/||;t" \
+		-e "s|^$${topsrcdirregexp}/|$(top_builddir)/|;t"`; \
+	for path in $${manifest_paths}; do \
+		if test -f $${path} || test -d $${path}; then d=.; else d=$(srcdir); fi; \
+		if test -d $${d}/$${path}; then \
+			destdir=`echo "/$${path}" | sed -e 's,/[^/]*$$,,'`; \
+			if test -d $(srcdir)/$${path} && test $${d} != $(srcdir); then \
+				if test $${d} != $(srcdir); then \
+					find "$(srcdir)/$${path}" -type f -print | \
+					    sed -e "s|^$${topbuilddirregexp}/||;t" >> \
+					    "$(MANIFESTFILE)"; \
+				fi; \
+			fi; \
+			if test $${d} != $(srcdir); then \
+				builddirstem=`echo $(srcdir) | sed -e "s|$${topsrcdirregexp}/||;t"`; \
+				find "$${d}/$${path}" -type f -print | \
+				    sed -e "s|^\./|$${builddirstem}/|;t" >> \
+				    "$(MANIFESTFILE)"; \
+			else \
+				find "$${d}/$${path}" -type f -print | \
+				    sed -e "s|^$${topbuilddirregexp}/||;t" >> \
+				    "$(MANIFESTFILE)"; \
+			fi; \
+		else \
+			if test $${d} != $(srcdir); then \
+				echo "$(manifestdir)/$${path}" | \
+				    sed -e "s|^$${topbuilddirregexp}/||;t" >> \
+				    "$(MANIFESTFILE)"; \
+			else \
+				echo "$${d}/$${path}" | \
+				    sed -e "s|^$${topbuilddirregexp}/||;t" >> \
+				    "$(MANIFESTFILE)"; \
+			fi; \
+		fi; \
+	done
+	@list='$(DIST_SUBDIRS)'; for subdir in $${list}; do \
+	  if test "$${subdir}" = .; then :; else \
+	    dir1=$${subdir}; dir2="$(manifestdir)/$${subdir}"; \
+	    $(nl-relativize); \
+	    new_manifestdir=$${reldir}; \
+	    dir1=$${subdir}; dir2="$(top_manifestdir)"; \
+	    $(nl-relativize); \
+	    new_top_manifestdir=$${reldir}; \
+	    (cd $${subdir} && \
+	      $(MAKE) $(MFLAGS) \
+	        top_manifestdir="$${new_top_manifestdir}" \
+	        manifestdir="$${new_manifestdir}" \
+	        nl-remove-manifest=: \
+		nl-postprocess-manifest=: \
+	        manifestdir) \
+	      || exit 1; \
+	  fi; \
+	done
+	$(NL_V_AT)$(MAKE) $(MFLAGS) \
+	  top_manifestdir="$(top_manifestdir)" manifestdir="$(manifestdir)" \
+	  manifest-hook
+	$(NL_V_AT)$(nl-postprocess-manifest)
+
+# A package-hookable target that may be used for per-directory
+# package-specific manifest actions. This should have no commands
+# here.
+
+manifest-hook: manifest-hook-noop
+
+# A non-operational manifest-hook dependency that avoids output of
+# 'make[i]: Nothing to be done for 'manifest-hook'.
+
+.PHONY: manifest-hook-noop
+manifest-hook-noop:
+	@true
