@@ -29,6 +29,7 @@ include $(abs_top_nlbuild_autotools_dir)/automake/pre/macros/verbosity.am
 include $(abs_top_nlbuild_autotools_dir)/automake/pre/macros/coverage.am
 include $(abs_top_nlbuild_autotools_dir)/automake/pre/macros/subdirs.am
 include $(abs_top_nlbuild_autotools_dir)/automake/pre/macros/foreigndeps.am
+include $(abs_top_nlbuild_autotools_dir)/automake/pre/macros/manifest.am
 
 #
 # create-directory
