@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #
-#    Copyright 2014-2016 Nest Labs Inc. All Rights Reserved.
+#    Copyright 2014-2016,2020 Nest Labs Inc. All Rights Reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -27,15 +27,47 @@
 #      This script is particularly useful when you are changing the
 #      configuration script and testing those changes.
 #
+#      When this script is run from the package source directory,
+#      it will attempt to construct a build directory based on configure
+#      arguments (if any).
+#
+me=${0##*/}
 
-srcdir=$(dirname "${0}")
+# I am assumed to live at the root of the package, get an absolute path
+abs_srcdir=$(cd "${0%/*}" && pwd)
+
+set -e
+
+# Change directories to the package source and rebootstrap the package,
+#  this populates ${srcdir}/build/automake/config.guess.
+(cd "$abs_srcdir" && ./bootstrap)
+
+# Clean up args so they can be used to make a filename.
+args_as_filename(){
+  declare filename=""
+
+  for i in "$@"; do
+    # remove slashes
+    i=${i//\//}
+    # anything else??
+
+    filename+=_$i
+  done
+
+  echo "${filename:1}"
+}
+
+# Unless the caller has invoked this script from a build directory, help
+#  him out with a unique, non-srcdir build/ directory.
+if [[ $(pwd) == "$abs_srcdir" ]]; then
+  build_dir="$abs_srcdir"/build/$("$abs_srcdir"/build/autoconf/config.guess)_$(args_as_filename "$@")
+  mkdir -p "$build_dir"
+  cd "$build_dir"
+fi
 
 # Try to bring the package build back to a pristine state.
-
 if [[ -f config.status ]]; then
   make maintainer-clean || exit ${?}
 fi
 
-# Change directories to the package source and rebootstrap the package.
-
-(cd "$srcdir" && ./bootstrap) && "$srcdir"/configure "${@}"
+"$abs_srcdir"/configure "${@}"
