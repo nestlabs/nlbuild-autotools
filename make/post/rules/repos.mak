@@ -175,10 +175,9 @@ clean-repos-local: clean-repos-hook
 		$(RM) -r $(addprefix $(top_srcdir)/,$(REPO_PATHS)); \
 		$(RMDIR) -p $(addprefix $(top_srcdir),$(dir $(REPO_PATHS))) 2> /dev/null || true; \
 		$(RM) -r $(REPO_CACHES) 2> /dev/null;; \
-	    clone) $(GIT) -C $(top_srcdir) rm -rf -q --cached $(REPO_PATHS) 2> /dev/null || true; \
-		$(RM) $(REPOS_WARNING_SENTINEL); \
+	    clone) $(RM) $(REPOS_WARNING_SENTINEL); \
 		$(RM) -r $(addprefix $(top_srcdir)/,$(REPO_PATHS)); \
-		$(RMDIR) -p $(addprefix $(top_srcdir),$(dir $(REPO_PATHS))) 2> /dev/null || true;; \
+		$(MKDIR) -p $(addprefix $(top_srcdir),$(REPO_PATHS)) || true;; \
             *) echo "$(REPOS_CONFIG): Unknown or unsupported pull method '$(REPOS_PULL_METHOD)'.";; \
 	esac
 
