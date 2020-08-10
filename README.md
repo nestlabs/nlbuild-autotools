@@ -129,7 +129,7 @@ Your package may have dependencies on other packages that can either
 be inlined into your package or can be specified externally. If your
 package has such dependencies, nlbuild-autotools contains support to
 facilitate easy standalone tests and a successful 'make distcheck'
-target (which effectively reqires 'configure' with no arguments to
+target (which effectively requires 'configure' with no arguments to
 produce a successful build) without incurring the costs of inlining
 these dependencies into your own package.
 
