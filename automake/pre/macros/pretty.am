@@ -40,7 +40,7 @@ am__v_PRETTY_CHECK_1 =
 # This defaults to SOURCES and HEADERS and may be overriden or
 # appended to.
 
-PRETTY_FILES    ?= $(SOURCES) $(HEADERS)
+PRETTY_FILES    ?= $(sort $(SOURCES) $(HEADERS))
 
 # PRETTY_SUBDIRS
 #
